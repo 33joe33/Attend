@@ -26,9 +26,9 @@ class Student:
         return self.present()
 
     def setAttendance(self, d=date.today()):
-        present = self.present()
+        #present = self.present()
         database("INSERT INTO ATTENDANCE (STUDENT_NAME, DATE,MONTH,YEAR, PRESENT) VALUES (?, ? ,?,?,?)",
-                 (self.Name, date.today(), date.today().month, date.today().year, present))
+                 (self.Name, date.today(), date.today().month, date.today().year, 1))
 
     def get_Month(self, Month):
         con = sqlite3.connect("Attendance.db")

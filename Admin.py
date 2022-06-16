@@ -58,12 +58,11 @@ class Admin:
         section_index = [i for i, c in self.classes[class_index]["section"] if c[section_name] == section_name]
         self.classes[class_index]["section"][section_index]["teacher"] = teacher_id
 
-    def take_attendance(self):
-        teacher = input("enter teacher id")
-        section = 0
+    def take_attendance(self,teacher):
+
         for c in self.classes:
             for s in c["sections"]:
                 if s["teacher"] == teacher:
                     section = s
-        for stu in s["students"]:
+        for stu in section["students"]:
             stu.setAttendance(date)

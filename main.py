@@ -1,4 +1,6 @@
-#import student
+from datetime import date
+
+import student
 import Admin
 from tkinter import *
 from tkinter.ttk import *
@@ -12,13 +14,14 @@ login_frame = Frame(window)
 add_section_frame = Frame(window)
 user_frame = Frame(window)
 
-s = student.Student("joe")
-s.setAttendance()
-s.getAttendance("Week")
+s = student.Student(input("enter student name"))
+#s.setAttendance()
+
 
 admin = Admin.Admin()
 
-admin.add_class(1,20)
+#admin.take_attendance()
+admin.add_class(1, 20)
 admin.add_section(1, "Mr Jones")
 admin.add_section(1, "Mr smith")
 admin.add_section(1, "dasdfasd")
@@ -31,7 +34,7 @@ def validate_login(username, password, but):
         admin_frame = create_admin_frame()
         admin_frame.pack()
     elif username.get() == "user" and password.get() == "password":
-        login_frame.destroy()
+        but.master.destroy()
         user_frame.pack()
 
 
@@ -55,26 +58,47 @@ def display_insert(stud, time):
         for entry in e:
             display.insert(parent='', index='end', text='', values=entry)
 
+def take_attendance(teacher):
 
-def validate_user(student):
-    studentobj, student_class, student_section = admin.find_student(student.get())
-    user_frame.destroy()
-    button_frame = Frame(display_frame)
-    display_insert_week =partial(display_insert,studentobj,"Week")
-    display_insert_month =partial(display_insert,studentobj,"Week")
-    display_insert_year =partial(display_insert,studentobj,"Week")
+        for c in admin.classes:
+            for s in c["sections"]:
+                if s["teacher"] == teacher:
+                    section = s
+        f1=Frame(display_frame)
+        f1.pack()
+        for stu in section["students"]:
+            f=Frame(f1)
+            Label(f,text=stu.Name).grid(row=0,column=0)
+            Button(f,text="Present",command=lambda: stu.setAttendance(date)).grid(row=0,column=1)
+            f.pack()
+        Button(f,text="submit",command=lambda :f1.destroy()).grid(row=1,column=0)
 
-    Button(button_frame, text="Week", command=display_insert_week).pack()
-    Button(button_frame, text="Month", command=display_insert_month).pack()
-    Button(button_frame, text="Year", command=display_insert_year).pack()
-    #display.delete()
-    display_header.pack()
-    button_frame.pack()
-    display.pack()
-    Label(display_header, text="  Student name: " + studentobj.Name + "     Class: " + str(
-        student_class) + "     Section: " + student_section).pack()
+def validate_user(student_g,but):
 
-    display_frame.pack()
+    try:
+        studentobj, student_class, student_section = admin.find_student(student_g.get())
+        but.master.destroy()
+        button_frame = Frame(display_frame)
+        display_insert_week =partial(display_insert,studentobj,"Week")
+        display_insert_month =partial(display_insert,studentobj,"Week")
+        display_insert_year =partial(display_insert,studentobj,"Week")
+
+        Button(button_frame, text="Week", command=display_insert_week).pack()
+        Button(button_frame, text="Month", command=display_insert_month).pack()
+        Button(button_frame, text="Year", command=display_insert_year).pack()
+        #display.delete()
+        display_header.pack()
+        button_frame.pack()
+        display.pack()
+        Label(display_header, text="  Student name: " + studentobj.Name + "     Class: " + str(
+            student_class) + "     Section: " + student_section).pack()
+
+        display_frame.pack()
+    except:
+
+        try:take_attendance(student_g.get())
+        except:pass
+        display_frame.pack()
 
 
 def add_section(class_year, teacher_name, student_name):
@@ -221,13 +245,15 @@ def create_login_frame():
     but.grid(row=4, column=0)
     return login_frame
 
-Label(user_frame, text="enter student name").pack()
+Label(user_frame, text="enter name").pack()
 student_e = StringVar()
 student_name_entry = Entry(user_frame, textvariable=student_e)
 student_name_entry.pack()
-validate_user = partial(validate_user, student)
-student_name_btn = Button(user_frame, text="Enter", command=validate_user)
+validate_user = partial(validate_user, student_e)
+student_name_btn = Button(user_frame, text="Enter", command=lambda :validate_user(student_name_btn))
 student_name_btn.pack()
+
+
 display_frame = Frame(window)
 display_header = Frame(display_frame)
 display = Treeview(display_frame)
