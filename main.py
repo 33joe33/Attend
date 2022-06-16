@@ -69,13 +69,15 @@ def take_attendance(teacher):
         for stu in section["students"]:
             f=Frame(f1)
             Label(f,text=stu.Name).grid(row=0,column=0)
-            Button(f,text="Present",command=lambda: stu.setAttendance(date)).grid(row=0,column=1)
+            Button(f,text="Present",command=lambda: stu.setAttendance(1)).grid(row=0,column=1)
+            Button(f,text="Absent",command=lambda: stu.setAttendance(0)).grid(row=0,column=2)
             f.pack()
         Button(f,text="submit",command=lambda :f1.destroy()).grid(row=1,column=0)
 
 def validate_user(student_g,but):
 
     try:
+        print(student_g.get())
         studentobj, student_class, student_section = admin.find_student(student_g.get())
         but.master.destroy()
         button_frame = Frame(display_frame)
